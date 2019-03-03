@@ -234,10 +234,10 @@ Shopbase\ShopwareClient\Types::API_DELETE_LIST,     // DELETE list (stack)
 Response
 ---
 
-Each method of client will return an `Response` object. This object includes the content and the http-code of api response.
+Each method of client will return an `Response` object. This object includes the content and the http-message of api response.
 To handle this response the following methods included:
 
 `toJson()` will return the response content as json string
 `toArray()` will return the response content as array 
 `toObject()` will return the response content as object 
-`getResponseCode()` will return the response http code 
+`getResponseCode()` will return the response http message 

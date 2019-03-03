@@ -44,6 +44,11 @@ ___
 
 The `GET` method is used to get a list of items or a single item from the api.
 ```php
+get($resource, $item = null, array $params = array()): Response
+```
+
+Example:
+```php
 ...
 
 $customer_list = $client->get(\Shopbase\ShopwareClient\Resources\Customer::class);     // Returns a complete list of customers

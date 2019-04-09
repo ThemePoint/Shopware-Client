@@ -24,3 +24,7 @@ $client = new \Shopbase\ShopwareClient\Client($connection);
 
 $result = $client->get(\Shopbase\ShopwareClient\Resources\Customer::class, 1)->toObject();
 ```
+ 
+ 
+
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=59LH5AHNQ8XZW)

@@ -27,4 +27,4 @@ $result = $client->get(\Shopbase\ShopwareClient\Resources\Customer::class, 1)->t
  
  
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=59LH5AHNQ8XZW)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)]https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WPDZYBK6E4ZAG&source=url)

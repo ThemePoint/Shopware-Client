@@ -12,6 +12,7 @@ $connection = new \Shopbase\ShopwareClient\Connection(
     'key',                // Key for Shopware-API
     'domain',             // Domain to Shop (not including API path)
     'apiPath'             // Path of API
+    60         // Timeout of connection in seconds (default 0 -> no timeout)
 );
 
 ...
@@ -21,6 +22,8 @@ The class for this object is  `\Shopbase\ShopwareClient\Connection`.
 Note that the domain may not include the api-path. 
 As exemple your API-Url is 'http://www.example.com/api/' the 
 `domain` parameter is `http://www.example.com` and the `apiPath` parameter is `api`.
+
+The connection implements a timeout function. Informations how to handle the timeout you can find later this documentation.
 
 Client
 ------
@@ -241,3 +244,42 @@ To handle this response the following methods included:
 `toArray()` will return the response content as array 
 `toObject()` will return the response content as object 
 `getResponseCode()` will return the response http message 
+
+
+Timeout
+---
+
+The connection implements a timeout function witch allows you to close connection within a defined time.  
+The default value for this timeout is `0` which means that no timeout is used.
+It is defined in seconds.
+
+```php
+$connection = new \Shopbase\ShopwareClient\Connection(
+    ...
+    60         // The defined timeout
+);
+
+...
+```
+
+As example the timeout is set to 60 seconds the connection only allows actions within 60 seconds after creation.  
+If you want to reconnect there is an function which is called `reconnect`.
+
+```php
+...
+
+$newConnection = $connection->reconnect();
+
+...
+```
+
+And if you had already created a Client object you can refresh the connection with the `refreshConnection` function.
+```php
+...
+
+$clinet->refreshConnection();
+
+...
+```
+
+If you use this function you do not need to execute the `reconnect` function on Connection object before. It will automatically do the reconnection.

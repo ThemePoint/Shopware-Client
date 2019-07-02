@@ -23,6 +23,8 @@ final class Connection
 
     private $url;
 
+    private $apiPath;
+
     private $username;
 
     private $key;
@@ -31,11 +33,21 @@ final class Connection
 
     private $isGlobal = false;
 
-    public function __construct(string $username, string $key, string $url, string $apiPath = 'api')
+    private $timeout;
+
+    private $timeoutInt;
+
+    public function __construct(string $username, string $key, string $url, string $apiPath = 'api', int $timeout = null)
     {
         $this->url = $this->validateUrl($url, $apiPath);
+        $this->apiPath = $apiPath;
         $this->username = $username;
         $this->key = $key;
+
+        if ($timeout !== null && $timeout > 0) {
+            $this->timeout = new \DateTimeImmutable(strtotime(sprintf('+ %sseconds', $timeout)));
+            $this->timeoutInt = $timeout;
+        }
     }
 
     public function setIsGlobal(): self
@@ -73,9 +85,19 @@ final class Connection
         return $this->connection;
     }
 
+    public function reconnect()
+    {
+        return new self($this->username, $this->key, $this->url, $this->apiPath, $this->timeoutInt);
+    }
+
     public function getUrl(): string
     {
         return $this->url;
+    }
+
+    public function getTimeout(): ?\DateTimeImmutable
+    {
+        return $this->timeout;
     }
 
     private function validateUrl(string $url, string $apiPath): string

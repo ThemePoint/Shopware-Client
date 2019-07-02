@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Shopbase\ShopwareClient;
 
 use Shopbase\ShopwareClient\Exceptions\ClientException;
+use Shopbase\ShopwareClient\Exceptions\TimeoutException;
 use Shopbase\ShopwareClient\Interfaces\ClientInterface;
 use Shopbase\ShopwareClient\Interfaces\ResourceInterface;
 
@@ -32,7 +33,7 @@ final class Client implements ClientInterface
         }
 
         $this->url = $connection->getUrl();
-        $this->connection = $connection->getConnection();
+        $this->connection = $connection;
     }
 
     public function get($resource, $item = null, array $params = array()): Response
@@ -121,18 +122,30 @@ final class Client implements ClientInterface
         );
     }
 
+    public function refreshConnection(): self
+    {
+        $this->connection = $this->connection->reconnect();
+        return $this;
+    }
+
     private function call(ResourceInterface $resource, string $method, string $endpoint, array $params = array(), array $data = array()): Response
     {
         if (!\in_array($method, $resource->getValidTypes())) {
             throw new ClientException(sprintf('Method %s is not valid', $method));
         }
 
-        curl_setopt($this->connection, CURLOPT_URL, sprintf('%s/%s?%s', rtrim($this->url, '/'), rtrim($endpoint, '?'), !empty($params) ? http_build_query($params) : ''));
-        curl_setopt($this->connection, CURLOPT_CUSTOMREQUEST, Types::getHttpMethod($method));
-        curl_setopt($this->connection, CURLOPT_POSTFIELDS, json_encode($data));
+        if (new \DateTimeImmutable() >= $this->connection->getTimeout()) {
+            throw new TimeoutException(sprintf('Connection timed out.'));
+        }
 
-        $result = curl_exec($this->connection);
-        $httpCode = curl_getinfo($this->connection, CURLINFO_HTTP_CODE);
+        $connection = $this->connection->getConnection();
+
+        curl_setopt($connection, CURLOPT_URL, sprintf('%s/%s?%s', rtrim($this->url, '/'), rtrim($endpoint, '?'), !empty($params) ? http_build_query($params) : ''));
+        curl_setopt($connection, CURLOPT_CUSTOMREQUEST, Types::getHttpMethod($method));
+        curl_setopt($connection, CURLOPT_POSTFIELDS, json_encode($data));
+
+        $result = curl_exec($connection);
+        $httpCode = curl_getinfo($connection, CURLINFO_HTTP_CODE);
 
         return new Response($result, $httpCode);
     }

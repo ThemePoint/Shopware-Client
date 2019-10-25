@@ -45,7 +45,7 @@ final class Connection
         $this->key = $key;
 
         if ($timeout !== null && $timeout > 0) {
-            $this->timeout = new \DateTimeImmutable(strtotime(sprintf('+ %sseconds', $timeout)));
+            $this->timeout = new \DateTimeImmutable(strtotime(sprintf('+ %s seconds', $timeout)));
             $this->timeoutInt = $timeout;
         }
     }
